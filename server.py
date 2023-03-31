@@ -12,11 +12,11 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response, session
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
-
+app.secret_key = os.urandom(24)
 
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
@@ -252,46 +252,32 @@ def searchmatches():
 
 #-------------------------------------------------------------------------------
 # searching data for the player user input
-@app.route('/searchplayers', methods=['POST'])
-def searchplayers():
+@app.route('/searchP', methods=['POST'])
+def searchP():
         # accessing form inputs from user
         name = request.form['name']
-
         # passing params in for each variable into query
         params = {"search_player_name": f"%{name}%"}
         # params["search_player_name"] = name
-        select_query = "SELECT p.full_name as Name, p.position, p.date_of_birth, p.club AS Club_team, t.team_name AS National_team, p.jersey_number AS National_jersey_number, p.height, p.weight FROM players as p join teams as t on p.team_id = t.team_id WHERE lower(p.full_name) LIKE lower((:search_player_name))"
+        select_query1 = "SELECT p.full_name as Name, p.position, p.date_of_birth, p.club AS Club_team, t.team_name AS National_team, p.jersey_number AS National_jersey_number, p.height, p.weight FROM players as p join teams as t on p.team_id = t.team_id WHERE lower(p.full_name) LIKE lower((:search_player_name))"
+        cursor = g.conn.execute(text(select_query1),params)
+        player_data = []
+        for pdata in cursor:
+            player_data.append(pdata)
+        cursor.close()
+        context1 = dict(data1 = player_data)
 
-        cursor = g.conn.execute(text(select_query),params)
+        select_query2 = "SELECT p.full_name AS Name, m.match_date,m.match_time, t1.team_name AS home_team, m.score, t2.team_name AS away_team, e.event_type, e.time_in_match AS event_time FROM events AS e JOIN matches AS m ON e.match_id = m.match_id JOIN players AS p ON e.action_player_1 = p.player_id JOIN teams AS t1 ON m.home_team_id = t1.team_id JOIN teams AS t2 ON m.away_team_id = t2.team_id WHERE (e.event_type NOT IN ('Substitution') AND lower(p.full_name) LIKE lower((:search_player_name))) ORDER BY match_date DESC"
+        cursor = g.conn.execute(text(select_query2),params)
         match_records = []
         for record in cursor:
             match_records.append(record)
         cursor.close()
-        context = dict(data = match_records)
+        # context = dict(data = match_records)
+        context2 = dict(data2 = match_records)
         # g.conn.commit()
-        return render_template("players.html",**context)
-#-------------------------------------------------------------------------------
-
-#-------------------------------------------------------------------------------
-# searching all match data for that players (not include the event_type of "Substitution")
-@app.route('/searchPlayersMatch', methods=['POST'])
-def searchPlayersMatch():
-    # accessing form inputs from user
-        name = request.form['name']
-
-        # passing params in for each variable into query
-        params = {"search_player_name": f"%{name}%"}
-        # params["search_player_name"] = name
-        select_query = "SELECT p.full_name AS Name, m.match_date,m.match_time, t1.team_name AS home_team, m.score, t2.team_name AS away_team, e.event_type, e.time_in_match AS event_time FROM events AS e JOIN matches AS m ON e.match_id = m.match_id JOIN players AS p ON e.action_player_1 = p.player_id JOIN teams AS t1 ON m.home_team_id = t1.team_id JOIN teams AS t2 ON m.away_team_id = t2.team_id WHERE (e.event_type NOT IN ('Substitution') AND lower(p.full_name) LIKE lower((:search_player_name))) ORDER BY match_date DESC"
-        cursor = g.conn.execute(text(select_query),params)
-        match_records = []
-        for record in cursor:
-            match_records.append(record)
-        cursor.close()
-        context = dict(data = match_records)
-        # g.conn.commit()
-        return render_template("players.html",**context)
-#-------------------------------------------------------------------------------
+        return render_template("players.html",**context1,**context2)
+#------------------------------------------------------------------------------
 
 @app.route('/login')
 def login():

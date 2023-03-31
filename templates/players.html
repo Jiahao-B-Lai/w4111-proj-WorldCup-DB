@@ -12,11 +12,12 @@
   <p><a href="/">Go to Scoreboard page</a></p>
   <p><a href="matches">Go to Matches record page</a></p>
   <h2>Players Data</h2>
-  <form method="POST" action="/searchplayers">
-<p>Type in the player name to search his basic information: (Please enter the full name if possible)<input type="text" name="name"> <input type="submit" value="Search"></p>
-</form>
-
-{% if data %}
+	
+  <div>
+	<form method="POST" action="/searchP">
+	<p>Type in the player name to search his basic information: (Please enter the full name if possible)<input type="text" name="name"> <input type="submit" value="Search"></p>
+	</form>
+{% if data1%}
 <div>
 <h3>Basic Information of the player you searched</h3>
 <table border="1">
@@ -33,7 +34,7 @@
   </tr>
 </thead>
 <tbody>
-  {% for records in data %}
+  {% for records in data1 %}
     <tr>
       <td>{{ records[0] }}</td>
       <td>{{ records[1] }}</td>
@@ -49,6 +50,45 @@
 </table>
 </div>
 {% endif %}
+
+{% if data2%}
+<div>
+<h3>All macth records and related events of this player</h3>
+<table border="1">
+<thead>
+  <tr>
+    <th>Name</th>
+    <th>Match Date</th>
+    <!-- <th>Match Time</th> -->
+    <th>Home Team</th>
+    <th>Score</th>
+    <th>Away Team</th>
+    <th>Event Type</th>
+    <th>Event Time (in min)</th>
+  </tr>
+</thead>
+<tbody>
+  {% for records2 in data2 %}
+    <tr>
+      <td>{{ records2[0] }}</td>
+      <td>{{ records2[1] }}</td>
+      <!-- <td>{{ records2[2] }}</td> -->
+      <td>{{ records2[3] }}</td>
+      <td>{{ records2[4] }}</td>
+      <td>{{ records2[5] }}</td>
+      <td>{{ records2[6] }}</td>
+      <td>{{ records2[7] }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
+</div>
+{% endif %}
+  </div>
+
+
+
+
 
 
 </body>
