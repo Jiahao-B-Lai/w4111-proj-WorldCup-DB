@@ -212,7 +212,7 @@ def matches():
 # This is for players data
 #
 @app.route('/players')
-def matches():
+def players():
         return render_template("players.html")
 
 # Example of adding new data to the database
@@ -227,6 +227,28 @@ def add():
         g.conn.execute(text('INSERT INTO test(name) VALUES (:new_name)'), params)
         g.conn.commit()
         return redirect('/')
+
+#-------------------------------------------------------------------------------
+#Debuging: Example of searching data
+@app.route('/search', methods=['POST'])
+def search():
+        # accessing form inputs from user
+        name = request.form['name']
+
+        # passing params in for each variable into query
+        params = {}
+        params["search_team_name"] = name
+        select_query = "SELECT m.match_date, m.match_time, s.stadium_name, t1.team_name AS home_team, m.score, t2.team_name AS away_team, r.full_name as referee_name FROM matches AS m JOIN teams AS t1 ON m.home_team_id = t1.team_id JOIN teams AS t2 ON m.away_team_id = t2.team_id JOIN stadiums AS s on s.stadium_id = m.stadium_id JOIN referees AS r on r.referee_id = m.referee_id WHERE (t1.team_name = (:search_team_name) OR t2.team_name = (:search_team_name))"
+
+        cursor = g.conn.execute(text(select_query),params)
+        match_records = []
+        for record in cursor:
+            match_records.append(record)
+        cursor.close()
+        context = dict(data = match_records)
+        # g.conn.commit()
+        return render_template("matches.html",**context)
+#-------------------------------------------------------------------------------
 
 
 @app.route('/login')

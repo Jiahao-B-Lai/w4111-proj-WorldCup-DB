@@ -13,15 +13,41 @@
   <p><a href="players">Go to Players record page</a></p>
   <h2>Matches Data</h2>
 
-  <div>
-
-  </div>
-
-
-<form method="POST" action="/add">
-<p>Name of new computer scientist(this is the original example provided by professor in test table): HERE WE CAN ADD A MODULE OF ADDING MATCH DATA <input type="text" name="name"> <input type="submit" value="Add"></p>
+<form method="POST" action="/search">
+<p>Type in the team name to search its match records:<input type="text" name="name"> <input type="submit" value="Search"></p>
 </form>
 
+{% if data %}
+<div>
+<h3>All matches for the team you selected</h3>
+<table border="1">
+<thead>
+  <tr>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Stadium</th>
+    <th>Home Team</th>
+    <th>Score</th>
+    <th>Away Team</th>
+    <th>Referee</th>
+  </tr>
+</thead>
+<tbody>
+	{% for records in data %}
+    <tr>
+      <td>{{ records[0] }}</td>
+      <td>{{ records[1] }}</td>
+      <td>{{ records[2] }}</td>
+      <td>{{ records[3] }}</td>
+      <td>{{ records[4] }}</td>
+      <td>{{ records[5] }}</td>
+      <td>{{ records[6] }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
+</div>
+{% endif %}
 </body>
 
 
