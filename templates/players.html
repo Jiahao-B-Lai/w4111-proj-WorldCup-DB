@@ -12,15 +12,44 @@
   <p><a href="/">Go to Scoreboard page</a></p>
   <p><a href="matches">Go to Matches record page</a></p>
   <h2>Players Data</h2>
-
-  <div>
-
-  </div>
-
-
-<form method="POST" action="/add">
-<p>Name of new computer scientist(this is the original example provided by professor in test table): HERE WE CAN ADD A MODULE OF ADDING PLAYER DATA <input type="text" name="name"> <input type="submit" value="Add"></p>
+  <form method="POST" action="/searchplayers">
+<p>Type in the player name to search his basic information: (Please enter the full name if possible)<input type="text" name="name"> <input type="submit" value="Search"></p>
 </form>
+
+{% if data %}
+<div>
+<h3>Basic Information of the player you searched</h3>
+<table border="1">
+<thead>
+  <tr>
+    <th>Name</th>
+    <th>Postion</th>
+    <th>Date of Birth</th>
+    <th>Club Team</th>
+    <th>National Team</th>
+    <th>National Jersey Number</th>
+    <th>Height (in cm)</th>
+    <th>Weight (in kg)</th>
+  </tr>
+</thead>
+<tbody>
+  {% for records in data %}
+    <tr>
+      <td>{{ records[0] }}</td>
+      <td>{{ records[1] }}</td>
+      <td>{{ records[2] }}</td>
+      <td>{{ records[3] }}</td>
+      <td>{{ records[4] }}</td>
+      <td>{{ records[5] }}</td>
+      <td>{{ records[6] }}</td>
+      <td>{{ records[7] }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
+</div>
+{% endif %}
+
 
 </body>
 
