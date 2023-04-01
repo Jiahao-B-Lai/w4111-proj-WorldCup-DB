@@ -45,18 +45,18 @@ engine = create_engine(DATABASEURI)
 # Example of running queries in your database
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
-with engine.connect() as conn:
-        create_table_command = """
-        CREATE TABLE IF NOT EXISTS test (
-                id serial,
-                name text
-        )
-        """
-        res = conn.execute(text(create_table_command))
-        insert_table_command = """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace')"""
-        res = conn.execute(text(insert_table_command))
-        # you need to commit for create, insert, update queries to reflect
-        conn.commit()
+# with engine.connect() as conn:
+#         create_table_command = """
+#         CREATE TABLE IF NOT EXISTS test (
+#                 id serial,
+#                 name text
+#         )
+#         """
+#         res = conn.execute(text(create_table_command))
+#         insert_table_command = """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace')"""
+#         res = conn.execute(text(insert_table_command))
+#         # you need to commit for create, insert, update queries to reflect
+#         conn.commit()
 
 
 @app.before_request
@@ -204,9 +204,9 @@ def index():
 # Notice that the function name is matches() rather than index()
 # The functions for each app.route need to have different names
 #
-@app.route('/matches')
-def matches():
-        return render_template("matches.html")
+@app.route('/teams')
+def teams():
+        return render_template("teams.html")
 
 #
 # This is for players data
@@ -245,9 +245,17 @@ def searchmatches():
         for record in cursor:
             match_records.append(record)
         cursor.close()
-        context = dict(data = match_records)
-        # g.conn.commit()
-        return render_template("matches.html",**context)
+        context1 = dict(data1 = match_records)
+
+        select_query2 = "SELECT p.full_name AS player_name, p.position, p.club, p.jersey_number FROM teams AS t JOIN players AS p ON p.team_id = t.team_id WHERE lower(t.team_name) LIKE lower((:search_team_name))"
+        cursor = g.conn.execute(text(select_query2),params)
+        team_makeup = []
+        for player in cursor:
+            team_makeup.append(player)
+        cursor.close()
+        # context = dict(data = match_records)
+        context2 = dict(data2 = team_makeup)
+        return render_template("teams.html",**context1， **context2)
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------

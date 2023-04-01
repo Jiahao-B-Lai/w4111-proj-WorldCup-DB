@@ -10,14 +10,14 @@
 <body>
   <h1>2022 FIFA World Cup DataBase</h1>
   <p><a href="/">Go to Scoreboard page</a></p>
-  <p><a href="players">Go to Players record page</a></p>
+  <p><a href="players">Go to Players page</a></p>
   <h2>Matches Data</h2>
 
 <form method="POST" action="/searchmatches">
 <p>Type in the team name to search its match records:<input type="text" name="name"> <input type="submit" value="Search"></p>
 </form>
 
-{% if data %}
+{% if data1 %}
 <div>
 <h3>All matches for the team you selected</h3>
 <table border="1">
@@ -33,7 +33,7 @@
   </tr>
 </thead>
 <tbody>
-	{% for records in data %}
+	{% for records in data1 %}
     <tr>
       <td>{{ records[0] }}</td>
       <td>{{ records[1] }}</td>
@@ -48,6 +48,34 @@
 </table>
 </div>
 {% endif %}
+
+{% if data2%}
+<div>
+<h3>Team Squad</h3>
+<table border="1">
+<thead>
+  <tr>
+    <th>Player Name</th>
+    <th>Position</th>
+    <th>Club</th>
+    <th>Score</th>
+    <th>Jersey Number</th>
+  </tr>
+</thead>
+<tbody>
+  {% for records2 in data2 %}
+    <tr>
+      <td>{{ records2[0] }}</td>
+      <td>{{ records2[1] }}</td>
+      <td>{{ records2[2] }}</td>
+      <td>{{ records2[3] }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
+</div>
+{% endif %}
+
 </body>
 
 
