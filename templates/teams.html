@@ -9,12 +9,12 @@
 
 <body>
   <h1>2022 FIFA World Cup DataBase</h1>
-  <p><a href="/">Go to Scoreboard page</a></p>
-  <p><a href="players">Go to Players page</a></p>
+  <p><a href="/">Scoreboard </a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="players"> Players</a></p>
+  <hr>
   <h2>Matches Data</h2>
 
 <form method="POST" action="/searchmatches">
-<p>Type in the team name to search its match records:<input type="text" name="name"> <input type="submit" value="Search"></p>
+<p>Type in the team name to search its match records and team squad:<input type="text" name="name"> <input type="submit" value="Search"></p>
 </form>
 
 {% if data1 %}
@@ -58,7 +58,6 @@
     <th>Player Name</th>
     <th>Position</th>
     <th>Club</th>
-    <th>Score</th>
     <th>Jersey Number</th>
   </tr>
 </thead>
@@ -75,6 +74,7 @@
 </table>
 </div>
 {% endif %}
+
 
 </body>
 

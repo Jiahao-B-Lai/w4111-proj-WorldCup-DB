@@ -155,10 +155,7 @@ def index():
         all_groups.append(groupF)
         all_groups.append(groupG)
         all_groups.append(groupH)
-        #print(groupA)
-        #print('---')
-        #print(all_groups)
-        #print(all_groups[0][1][1])
+        
         cursor.close()
 
         #
@@ -197,12 +194,7 @@ def index():
         return render_template("index.html", **context)
 
 #
-# This is an example of a different path.  You can see it at:
-#
-#     localhost:8111/matches
-#
-# Notice that the function name is matches() rather than index()
-# The functions for each app.route need to have different names
+# This is for teams data
 #
 @app.route('/teams')
 def teams():
@@ -213,23 +205,34 @@ def teams():
 #
 @app.route('/players')
 def players():
-        return render_template("players.html")
+        select_query = "select * from players"
+        cursor = g.conn.execute(text(select_query))
+        all_players = cursor.fetchall()
+        cursor.close()
+        context = dict(all_players_data = all_players)
+        return render_template("players.html",**context)
 
-# Example of adding new data to the database
+# Adding new player to the database (players table)
+#   !! April-1:Debuging: The new added data is shown in postgresql database, but cannot shown in html seach player part!!
 @app.route('/add', methods=['POST'])
 def add():
         # accessing form inputs from user
-        name = request.form['name']
+        player_name = request.form['player_name']
+        position = request.form['position']
+        club = request.form['club']
 
         # passing params in for each variable into query
         params = {}
-        params["new_name"] = name
-        g.conn.execute(text('INSERT INTO test(name) VALUES (:new_name)'), params)
+        # Only pass 3 attributes to have a try:
+        params["new_name"] = player_name
+        params["new_position"] = position
+        params["new_club"] = club
+        g.conn.execute(text('INSERT INTO players(full_name,position,club) VALUES ((:new_name),(:new_position),(:new_club))'), params)
         g.conn.commit()
-        return redirect('/')
+        return redirect('/players')
 
 #-------------------------------------------------------------------------------
-# Searching match record data for the team user input
+# Searching team's match record data for the team user input
 @app.route('/searchmatches', methods=['POST'])
 def searchmatches():
         # accessing form inputs from user
@@ -247,15 +250,15 @@ def searchmatches():
         cursor.close()
         context1 = dict(data1 = match_records)
 
+        # Searching teams squad:
         select_query2 = "SELECT p.full_name AS player_name, p.position, p.club, p.jersey_number FROM teams AS t JOIN players AS p ON p.team_id = t.team_id WHERE lower(t.team_name) LIKE lower((:search_team_name))"
         cursor = g.conn.execute(text(select_query2),params)
         team_makeup = []
         for player in cursor:
             team_makeup.append(player)
         cursor.close()
-        # context = dict(data = match_records)
         context2 = dict(data2 = team_makeup)
-        return render_template("teams.html",**context1， **context2)
+        return render_template("teams.html",**context1, **context2)
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -266,7 +269,7 @@ def searchP():
         name = request.form['name']
         # passing params in for each variable into query
         params = {"search_player_name": f"%{name}%"}
-        # params["search_player_name"] = name
+        # Query the basic information of the player the user searching for
         select_query1 = "SELECT p.full_name as Name, p.position, p.date_of_birth, p.club AS Club_team, t.team_name AS National_team, p.jersey_number AS National_jersey_number, p.height, p.weight FROM players as p join teams as t on p.team_id = t.team_id WHERE lower(p.full_name) LIKE lower((:search_player_name))"
         cursor = g.conn.execute(text(select_query1),params)
         player_data = []
@@ -275,6 +278,7 @@ def searchP():
         cursor.close()
         context1 = dict(data1 = player_data)
 
+        # Query all match records and events of that player:
         select_query2 = "SELECT p.full_name AS Name, m.match_date,m.match_time, t1.team_name AS home_team, m.score, t2.team_name AS away_team, e.event_type, e.time_in_match AS event_time FROM events AS e JOIN matches AS m ON e.match_id = m.match_id JOIN players AS p ON e.action_player_1 = p.player_id JOIN teams AS t1 ON m.home_team_id = t1.team_id JOIN teams AS t2 ON m.away_team_id = t2.team_id WHERE (e.event_type NOT IN ('Substitution') AND lower(p.full_name) LIKE lower((:search_player_name))) ORDER BY match_date DESC"
         cursor = g.conn.execute(text(select_query2),params)
         match_records = []

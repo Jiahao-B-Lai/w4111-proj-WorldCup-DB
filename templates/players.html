@@ -9,16 +9,19 @@
 
 <body>
   <h1>2022 FIFA World Cup DataBase</h1>
-  <p><a href="/">Go to Scoreboard page</a> <a href="teams">Go to Teams page</a></p>
+  <p><a href="/">Scoreboard </a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="teams"> Teams</a></p>
+  <hr>
   <h2>Players Data</h2>
 
   <div>
 	<form method="POST" action="/searchP">
-	<p>Type in the player name to search his basic information: (Please enter the full name if possible)<input type="text" name="name"> <input type="submit" value="Search"></p>
+	<p>Type in the player name to search his basic information and match records: (Please enter the full name if possible)<input type="text" name="name"> <input type="submit" value="Search"></p>
 	</form>
 {% if data1%}
 <div>
 <h3>Basic Information of the player you searched</h3>
+<h5>Position notes: GK - Goalkeeper; DF - Defender; MF - Midfielder; FW - Forward; ST - Striker
+</h5>
 <table border="1">
 <thead>
   <tr>
@@ -85,8 +88,16 @@
 {% endif %}
   </div>
 
-
-
+  <hr>
+  <h4>!!!Still Working on it!!!  Adding new player</h3>
+  <div>
+<form method="POST" action="/add">
+  <p>Name of new player you want to add: <input type="text" name="player_name"></p>
+  <p>Postion: <input type="text" name="position"></p>
+  <p>Club: <input type="text" name="club"></p>
+  <input type="submit" value="Add">
+</form>
+  </div>
 
 
 
