@@ -213,7 +213,6 @@ def players():
         return render_template("players.html",**context)
 
 # Adding new player to the database (players table)
-#   !! April-1:Debuging: The new added data is shown in postgresql database, but cannot shown in html seach player part!!
 @app.route('/add', methods=['POST'])
 def add():
         # accessing form inputs from user
@@ -229,7 +228,15 @@ def add():
         params["new_club"] = club
         g.conn.execute(text('INSERT INTO players(full_name,position,club) VALUES ((:new_name),(:new_position),(:new_club))'), params)
         g.conn.commit()
-        return redirect('/players')
+        # ---------------------------------
+        # Trying to show the new added data:
+        cursor = g.conn.execute(text('SELECT full_name, position, club FROM players WHERE lower(full_name) LIKE lower((:new_name))'), params)
+        new_player_data = []
+        for new in cursor:
+            new_player_data.append(new)
+        cursor.close
+        context_new = dict(new_player = new_player_data)
+        return render_template('/players.html',**context_new)
 
 #-------------------------------------------------------------------------------
 # Searching team's match record data for the team user input
@@ -270,7 +277,7 @@ def searchP():
         # passing params in for each variable into query
         params = {"search_player_name": f"%{name}%"}
         # Query the basic information of the player the user searching for
-        select_query1 = "SELECT p.full_name as Name, p.position, p.date_of_birth, p.club AS Club_team, t.team_name AS National_team, p.jersey_number AS National_jersey_number, p.height, p.weight FROM players as p join teams as t on p.team_id = t.team_id WHERE lower(p.full_name) LIKE lower((:search_player_name))"
+        select_query1 = "SELECT p.full_name as Name, p.position, p.date_of_birth, p.club AS Club_team, t.team_name AS National_team, p.jersey_number AS National_jersey_number, p.height, p.weight FROM players as p left join teams as t on p.team_id = t.team_id WHERE lower(p.full_name) LIKE lower((:search_player_name))"
         cursor = g.conn.execute(text(select_query1),params)
         player_data = []
         for pdata in cursor:

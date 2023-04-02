@@ -89,7 +89,7 @@
   </div>
 
   <hr>
-  <h4>!!!Still Working on it!!!  Adding new player</h3>
+  <h4> Adding new player</h3>
   <div>
 <form method="POST" action="/add">
   <p>Name of new player you want to add: <input type="text" name="player_name"></p>
@@ -99,7 +99,26 @@
 </form>
   </div>
 
-
+{% if new_player %}
+<h4>New added player</h4>
+<table border="1">
+<thead>
+  <tr>
+    <th>Name</th>
+    <th>Position</th>
+    <th>Club</th>
+</thead>
+<tbody>
+  {% for n in new_player %}
+    <tr>
+      <td>{{ n[0] }}</td>
+      <td>{{ n[1] }}</td>
+      <td>{{ n[2] }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
+{% endif %}
 
 </body>
 
