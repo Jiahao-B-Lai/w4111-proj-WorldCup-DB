@@ -9,7 +9,7 @@
 
 <body>
   <h1>2022 FIFA World Cup DataBase</h1>
-  <p><a href="/">Scoreboard </a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="players"> Players</a></p>
+  <p><a href="/">Scoreboard </a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="players"> Players</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="referees"> Referees</a></p>
   <hr>
   <h2>Matches Data</h2>
 
@@ -42,6 +42,32 @@
       <td>{{ records[4] }}</td>
       <td>{{ records[5] }}</td>
       <td>{{ records[6] }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+</table>
+</div>
+{% endif %}
+
+{% if data3%}
+<div>
+<h3>Team Coach</h3>
+<table border="1">
+<thead>
+  <tr>
+    <th>Coach Name</th>
+    <th>Date of Birth</th>
+    <th>Team</th>
+    <th>Start Date</th>
+  </tr>
+</thead>
+<tbody>
+  {% for records3 in data3 %}
+    <tr>
+      <td>{{ records3[0] }}</td>
+      <td>{{ records3[1] }}</td>
+      <td>{{ records3[2] }}</td>
+      <td>{{ records3[3] }}</td>
     </tr>
   {% endfor %}
 </tbody>

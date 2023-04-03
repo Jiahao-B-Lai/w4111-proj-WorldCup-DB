@@ -209,8 +209,8 @@ def referees():
         cursor = g.conn.execute(text(select_query))
         all_referees = cursor.fetchall()
         cursor.close()
-        context = dict(all_players_data=all_referees)
-        return render_template("referees.html", **context)
+        context = dict(all_referees_data=all_referees)
+        return render_template("referee.html", **context)
 
 #
 # This is for players data
@@ -277,7 +277,15 @@ def searchmatches():
             team_makeup.append(player)
         cursor.close()
         context2 = dict(data2 = team_makeup)
-        return render_template("teams.html",**context1, **context2)
+
+        select_query3 = "SELECT c.full_name,c.date_of_birth, t.team_name ,c.start_date from coaches as c join teams as t on c.team_id = t.team_id where lower(t.team_name) like lower((:search_team_name))"
+        cursor = g.conn.execute(text(select_query3),params)
+        team_coach = []
+        for coach in cursor:
+            team_coach.append(coach)
+        cursor.close()
+        context3 = dict(data3 = team_coach)
+        return render_template("teams.html",**context1, **context2, **context3)
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
