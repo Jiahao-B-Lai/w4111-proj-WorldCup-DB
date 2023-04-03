@@ -10,9 +10,47 @@
 <body>
   <h1>2022 FIFA World Cup DataBase</h1>
   <p><a href="/">Scoreboard </a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="teams"> Teams</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="referees"> Referees</a></p>
-  <hr>
-  <h2>Players Data</h2>
 
+  <div id="adding_player_menu" style="background-color:#EEEEEE;height:800px;width:400px;float:right;">
+	<h4> Adding new player</h3>
+  	<div>
+	<form method="POST" action="/add">
+        <li>Name of new player you want to add: <input type="text" name="player_name"></li>
+        <li>Postion: <input type="text" name="position"></li>
+        <li>Club: <input type="text" name="club"></li>
+        <li>Height: <input type="text" name="height"></li>
+        <li>Weight: <input type="text" name="weight"></li>
+        <br>
+        <input type="submit" value="Add">
+	</form>
+  	</div>
+	{% if new_player %}
+	<h4>New added player</h4>
+	<table border="1">
+	<thead>
+  		<tr>
+    		<th>Name</th>
+    		<th>Position</th>
+    		<th>Club</th>
+    		<th>height (in cm)</th>
+    		<th>weight (in kg)</th>
+	</thead>
+	<tbody>
+  	{% for n in new_player %}
+    		<tr>
+      		<td>{{ n[0] }}</td>
+      		<td>{{ n[1] }}</td>
+      		<td>{{ n[2] }}</td>
+      		<td>{{ n[3] }}</td>
+      		<td>{{ n[4] }}</td>
+    	</tr>
+  	{% endfor %}
+	</tbody>
+	</table>
+	{% endif %}
+  	</div>
+<hr>
+  <h2>Players Data</h2>
   <div>
 	<form method="POST" action="/searchP">
 	<p>Type in the player name to search his basic information and match records: (Please enter the full name if possible)<input type="text" name="name"> <input type="submit" value="Search"></p>
@@ -88,38 +126,76 @@
 {% endif %}
   </div>
 
-  <hr>
-  <h4> Adding new player</h3>
-  <div>
-<form method="POST" action="/add">
-  <p>Name of new player you want to add: <input type="text" name="player_name"></p>
-  <p>Postion: <input type="text" name="position"></p>
-  <p>Club: <input type="text" name="club"></p>
-  <input type="submit" value="Add">
-</form>
-  </div>
 
-{% if new_player %}
-<h4>New added player</h4>
-<table border="1">
+  <hr>
+  <h4> Players Performance Comparison </h4>
+  <div>
+	  <form method="POST" action="/player_vs">
+		  <p>Type in the name of Player-1:<input type = 'text' name = 'player 1'>
+		  <br>
+		  <br>
+		  <b> VS </b><br>
+		  <br>
+		  Type in the name of Player-2:<input type = 'text' name = 'player 2'>
+		  <br>
+		  <br>
+		  <input type="submit" value="Compare"> </p>
+	  </form>
+
+	{% if player1 or player2 %}
+	  <div>
+		  <table border="1">
 <thead>
   <tr>
-    <th>Name</th>
+    <th>Player Name</th>
     <th>Position</th>
-    <th>Club</th>
+    <th>National Team</th>
+    <th>Club Team</th>
+    <th>Goals</th>
+    <th>Own Goals</th>
+    <th>Disallowed Goals</th>
+    <th>Penalty</th>
+    <th>Missed Penalty</th>
+    <th>Yellow Card</th>
+    <th>Red Card</th>
 </thead>
 <tbody>
-  {% for n in new_player %}
+  {% for n in player1 %}
     <tr>
       <td>{{ n[0] }}</td>
       <td>{{ n[1] }}</td>
       <td>{{ n[2] }}</td>
+      <td>{{ n[3] }}</td>
+      <td>{{ n[4] }}</td>
+      <td>{{ n[5] }}</td>
+      <td>{{ n[6] }}</td>
+      <td>{{ n[7] }}</td>
+      <td>{{ n[8] }}</td>
+      <td>{{ n[9] }}</td>
+      <td>{{ n[10] }}</td>
+    </tr>
+  {% endfor %}
+  {% for n in player2 %}
+    <tr>
+      <td>{{ n[0] }}</td>
+      <td>{{ n[1] }}</td>
+      <td>{{ n[2] }}</td>
+      <td>{{ n[3] }}</td>
+      <td>{{ n[4] }}</td>
+      <td>{{ n[5] }}</td>
+      <td>{{ n[6] }}</td>
+      <td>{{ n[7] }}</td>
+      <td>{{ n[8] }}</td>
+      <td>{{ n[9] }}</td>
+      <td>{{ n[10] }}</td>
     </tr>
   {% endfor %}
 </tbody>
 </table>
-{% endif %}
 
+	  </div>
+	  {% endif %}
+ 
 </body>
 
 

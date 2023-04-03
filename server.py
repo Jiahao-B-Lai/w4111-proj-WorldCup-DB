@@ -41,23 +41,6 @@ DATABASEURI = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWRD}@{DATABASE_HO
 #
 engine = create_engine(DATABASEURI)
 
-#
-# Example of running queries in your database
-# Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
-#
-# with engine.connect() as conn:
-#         create_table_command = """
-#         CREATE TABLE IF NOT EXISTS test (
-#                 id serial,
-#                 name text
-#         )
-#         """
-#         res = conn.execute(text(create_table_command))
-#         insert_table_command = """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace')"""
-#         res = conn.execute(text(insert_table_command))
-#         # you need to commit for create, insert, update queries to reflect
-#         conn.commit()
-
 
 @app.before_request
 def before_request():
@@ -231,18 +214,21 @@ def add():
         player_name = request.form['player_name']
         position = request.form['position']
         club = request.form['club']
-
+        height = request.form['height']
+        weight = request.form['weight']
         # passing params in for each variable into query
         params = {}
         # Only pass 3 attributes to have a try:
         params["new_name"] = player_name
         params["new_position"] = position
         params["new_club"] = club
-        g.conn.execute(text('INSERT INTO players(full_name,position,club) VALUES ((:new_name),(:new_position),(:new_club))'), params)
+        params["new_height"] = height
+        params["new_weight"] = weight
+        g.conn.execute(text('INSERT INTO players(full_name,position,club,height, weight) VALUES ((:new_name),(:new_position),(:new_club),(:new_height),(:new_weight))'), params)
         g.conn.commit()
         # ---------------------------------
         # Trying to show the new added data:
-        cursor = g.conn.execute(text('SELECT full_name, position, club FROM players WHERE lower(full_name) LIKE lower((:new_name))'), params)
+        cursor = g.conn.execute(text('SELECT full_name, position, club ,height, weight FROM players WHERE lower(full_name) LIKE lower((:new_name))'), params)
         new_player_data = []
         for new in cursor:
             new_player_data.append(new)
@@ -324,8 +310,8 @@ A player VS feature
 @app.route('/player_vs', methods=['POST'])
 def player_vs():
         #two players input from user
-        pl1 = request.form('player 1')
-        pl2 = request.form('player 2')
+        pl1 = request.form['player 1']
+        pl2 = request.form['player 2']
 
         #create each name into dictionary for SQL query later
         param_dic1 = {"search_player_name1": f"%{pl1}%"}
@@ -359,7 +345,7 @@ def player_vs():
         for pdata in cursor1:
                 player1_data.append(pdata)
         cursor1.close()
-        context1 = dict(data1=player1_data)
+        context1 = dict(player1 = player1_data)
 
         select_query2 = """
                 SELECT 
@@ -378,7 +364,7 @@ def player_vs():
 
                 FROM ((SELECT full_name, position, club, player_id FROM players)P JOIN events e ON e.action_player_1 = p.player_id)pe JOIN teams t ON pe.team_id = t.team_id
                 WHERE
-                        lower(full_name) LIKE lower((:search_player_name1))
+                        lower(full_name) LIKE lower((:search_player_name2))
                 GROUP BY full_name, position, team_name, club;
                 """
         cursor2 = g.conn.execute(text(select_query2), param_dic2)
@@ -386,9 +372,9 @@ def player_vs():
         for pdata in cursor2:
                 player2_data.append(pdata)
         cursor2.close()
-        context2 = dict(data2=player2_data)
+        context2 = dict(player2=player2_data)
 
-        return render_template("playerVS.html", **context1, **context2)
+        return render_template("players.html", **context1, **context2)
 
 @app.route('/login')
 def login():
