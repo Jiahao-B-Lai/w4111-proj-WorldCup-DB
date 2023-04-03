@@ -201,6 +201,18 @@ def teams():
         return render_template("teams.html")
 
 #
+#This is for referee data
+#
+@app.route('/referees')
+def referees():
+        select_query = "select * from referees"
+        cursor = g.conn.execute(text(select_query))
+        all_referees = cursor.fetchall()
+        cursor.close()
+        context = dict(all_players_data=all_referees)
+        return render_template("referees.html", **context)
+
+#
 # This is for players data
 #
 @app.route('/players')
@@ -297,6 +309,78 @@ def searchP():
         # g.conn.commit()
         return render_template("players.html",**context1,**context2)
 #------------------------------------------------------------------------------
+
+"""
+A player VS feature
+"""
+@app.route('/player_vs', methods=['POST'])
+def player_vs():
+        #two players input from user
+        pl1 = request.form('player 1')
+        pl2 = request.form('player 2')
+
+        #create each name into dictionary for SQL query later
+        param_dic1 = {"search_player_name1": f"%{pl1}%"}
+        param_dic2 = {"search_player_name2": f"%{pl2}%"}
+
+        #query information that matters/makes sense in a VS scenario:
+        # Name, Position, National-Team, Club-Team, # of own goals, # of disallowed goal
+        # # of Penalty, # of missed Penalty, # of Yellow card (1st card + 2nd card), # of Red card
+        select_query1 = """
+        SELECT 
+                full_name AS player1_name,
+                position AS Position,
+                team_name AS National_team,
+                club AS Club_team,
+                COUNT(CASE WHEN event_type = 'Goal' THEN 1 END) AS Goals,
+                COUNT(CASE WHEN event_type = 'Own goal' THEN 1 END) AS Own_goals,
+                COUNT(CASE WHEN event_type = 'Disallowed goal' THEN 1 END) AS Disallowed_goals,
+                COUNT(CASE WHEN event_type = 'Penalty' THEN 1 END) AS Penalty,
+                COUNT(CASE WHEN event_type = 'Missed penalty' THEN 1 END) AS Missed_penalty,
+                COUNT(CASE WHEN event_type = 'Yellow card' THEN 1 
+                WHEN event_type = 'Second yellow card' THEN 1 END) AS Yellow_cards,
+                COUNT(CASE WHEN event_type = 'Red card' THEN 1 END) AS Red_cards
+        
+        FROM ((SELECT full_name, position, club, player_id FROM players)P JOIN events e ON e.action_player_1 = p.player_id)pe JOIN teams t ON pe.team_id = t.team_id
+        WHERE
+                lower(full_name) LIKE lower((:search_player_name1))
+        GROUP BY full_name, position, team_name, club;
+        """
+        cursor1 = g.conn.execute(text(select_query1), param_dic1)
+        player1_data = []
+        for pdata in cursor1:
+                player1_data.append(pdata)
+        cursor1.close()
+        context1 = dict(data1=player1_data)
+
+        select_query2 = """
+                SELECT 
+                        full_name AS player2_name,
+                        position AS Position,
+                        team_name AS National_team,
+                        club AS Club_team,
+                        COUNT(CASE WHEN event_type = 'Goal' THEN 1 END) AS Goals,
+                        COUNT(CASE WHEN event_type = 'Own goal' THEN 1 END) AS Own_goals,
+                        COUNT(CASE WHEN event_type = 'Disallowed goal' THEN 1 END) AS Disallowed_goals,
+                        COUNT(CASE WHEN event_type = 'Penalty' THEN 1 END) AS Penalty,
+                        COUNT(CASE WHEN event_type = 'Missed penalty' THEN 1 END) AS Missed_penalty,
+                        COUNT(CASE WHEN event_type = 'Yellow card' THEN 1 
+                        WHEN event_type = 'Second yellow card' THEN 1 END) AS Yellow_cards,
+                        COUNT(CASE WHEN event_type = 'Red card' THEN 1 END) AS Red_cards
+
+                FROM ((SELECT full_name, position, club, player_id FROM players)P JOIN events e ON e.action_player_1 = p.player_id)pe JOIN teams t ON pe.team_id = t.team_id
+                WHERE
+                        lower(full_name) LIKE lower((:search_player_name1))
+                GROUP BY full_name, position, team_name, club;
+                """
+        cursor2 = g.conn.execute(text(select_query2), param_dic2)
+        player2_data = []
+        for pdata in cursor2:
+                player2_data.append(pdata)
+        cursor2.close()
+        context2 = dict(data2=player2_data)
+
+        return render_template("playerVS.html", **context1, **context2)
 
 @app.route('/login')
 def login():
