@@ -11,7 +11,7 @@ In addition, all match records and related events of this player will also be sh
 such as Spanish and French will render garbled letters (Mojibake)--eg. "Kylian Mbappé" will be shown as "Kylian Mbapp√©". The player's jersey number data is not completely 
 accurate due to outdated datasource. Lastly, "match records and related events" section doesn't include player assist reading due to lack of data.
 * Player data insertion -- users can insert new player data to the database. For now, users can specify 
-**Name of new player you want to add**, **Postion**, **Club**, **Height** and **Weight**. <br>
+**Name of new player**, **Postion**, **Club**, **Height** and **Weight**. <br>
 Please notice that When adding a player, the player's team attribute is not set because we have a constraint on the size of the team when designing the database.
 * Player VS feature -- user can type in two players' names (we encourage using full name for 
 more accurate searching) to compare their basic information as well as performance throughout the entire Worldcup 
@@ -23,16 +23,16 @@ more accurate searching) to compare their basic information as well as performan
 H, though we did not show the knockout stage information.
 
 ## Features in Part 1 proposal that we didn't implement
-1.Match data insertion.
-2.Detailed comparison of players' specific skills such like tackling, dribbing, etc.
+1. Match data insertion
+2. Detailed comparison of players' specific skills such like tackling, dribbing, etc.
 
 ## Two of the web pages that require the most interesting database operations
 1. **Players** tab: 
-* this web page features 8 input text, all serving their unique SELECT and INSERT query. For example, input under the section titled 
-**Players Performance Comparison** are passed in as parameter for SQL search for a specified pattern, which accompanied by SELECT() and COUNT() function altoghter enable player performance data retrieval and summary.
+  > * The content of this page has been explained above
+  > * this web page features 8 input text, all serving their unique SELECT and INSERT query. For example, input under the section titled **Players Performance Comparison** are passed in as parameter for SQL search for a specified pattern, which accompanied by SELECT() and COUNT() function altoghter enable player performance data retrieval and summary.
 
 2. **Teams** tab：
-* in this web page, the informations about teams are retrieved from 6 out 8 tables in our database. 
-* According to the team name the users input, this page firstly show all the match records in 2022 Qatar World Cup, including the date and time of each game, the home team and away team, the game score, the stadium held that game and the referee who officiated that game. When matching the user input with the team name in our database, we also use ```python params = {"search_team_name": f"%{name}%"} ``` and the condition```SQL (lower(team_name) LIKE lower((:search_team_name)) ``` in `WHERE` clause to eliminate the input case issues.
-* Then it gives the coach's information of this team, including the coach's name, date of birth, and the date of this coach starting manage this team.
-* The third part of this page shows the team squad. For each player in that team, this page gives which club the player plays for, so that we can see the distribution of club players in a national team.  For example, in team france, there are four players coming from club Bayern Munich.
+  > * in this web page, the informations about teams are retrieved from 6 out 8 tables in our database. 
+  > * According to the team name the users input, this page firstly show all the match records in 2022 Qatar World Cup, including the date and time of each game, the home team and away team, the game score, the stadium held that game and the referee who officiated that game. When matching the user input with the team name in our database, we also use ```params = {"search_team_name": f"%{name}%"} ``` and the condition``` (lower(team_name) LIKE lower((:search_team_name)) ``` in `WHERE` clause to eliminate the input case issues.
+  > * Then it gives the coach's information of this team, including the coach's name, date of birth, and the date of this coach starting manage this team.
+  > * The third part of this page shows the team squad. For each player in that team, this page gives which club the player plays for, so that we can see the distribution of club players in a national team.  For example, in team france, there are four players coming from club Bayern Munich.
