@@ -1,5 +1,5 @@
 # w4111-proj-WorldCup-DB -- Team 25: Jiahao Lai, Tangwen Zhu
-##  PostgreSQ account
+##  PostgreSQL account
 jl6274
 ## URL of web application
 http://35.185.84.232:8111/
