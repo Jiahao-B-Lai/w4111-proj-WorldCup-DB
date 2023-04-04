@@ -7,7 +7,7 @@ http://35.185.84.232:8111/
 1. User can navigate to **Teams** tab and input the country name to look up the national team match records and team makeup. In addition, we also added information regarding the coach.
 2. User can naviagte to **Players** tab, under which we have implemented several features:<br>
 * Player look-up -- user can type in the full name or part of the name of a player to check information such as DOB, Club, Height, etc. 
-In addition, all match records and related events of this player will also be shown. <br> However, please notice that player names that contains accent in different languages 
+In addition, all match records and related events of this player will also be shown. <br> However, please notice that player names that contain accent in different languages 
 such as Spanish and French will render garbled letters (Mojibake)--eg. "Kylian Mbappé" will be shown as "Kylian Mbapp√©". The player's jersey number data is not completely 
 accurate due to outdated datasource. Lastly, "match records and related events" section doesn't include player assist reading due to lack of data.
 * Player data insertion -- user can insert new player data to the database. For now, user can specify 
